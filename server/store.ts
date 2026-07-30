@@ -91,4 +91,80 @@ export class FileOrderStore implements OrderStore {
   }
 }
 
-export const store: OrderStore = new FileOrderStore();
+/**
+ * Store dla środowisk serverless (Vercel/Upstash Redis, REST).
+ * Konieczny na Vercelu: webhook i utworzenie zamówienia to osobne wywołania funkcji,
+ * które nie dzielą pamięci — stan musi żyć poza procesem.
+ * Włącza się automatycznie, gdy w env są KV_REST_API_URL + KV_REST_API_TOKEN.
+ */
+export class KvOrderStore implements OrderStore {
+  constructor(
+    private url: string,
+    private token: string,
+  ) {}
+
+  private async cmd<T = unknown>(command: (string | number)[]): Promise<T> {
+    const res = await fetch(this.url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(command),
+    });
+    if (!res.ok) throw new Error(`KV ${command[0]} => HTTP ${res.status}`);
+    const data = (await res.json()) as { result: T };
+    return data.result;
+  }
+
+  private key = (id: string) => `order:${id}`;
+  private sessionKey = (sessionId: string) => `session:${sessionId}`;
+
+  async create(order: Order) {
+    await this.cmd(['SET', this.key(order.id), JSON.stringify(order)]);
+    await this.cmd(['LPUSH', 'orders:index', order.id]);
+    return order;
+  }
+
+  async get(id: string) {
+    const raw = await this.cmd<string | null>(['GET', this.key(id)]);
+    return raw ? (JSON.parse(raw) as Order) : null;
+  }
+
+  async update(id: string, patch: Partial<Order>) {
+    const current = await this.get(id);
+    if (!current) return null;
+    const next: Order = { ...current, ...patch, updatedAt: new Date().toISOString() };
+    await this.cmd(['SET', this.key(id), JSON.stringify(next)]);
+    // utrzymujemy indeks sesja -> zamówienie do obsługi webhooka
+    if (patch.providerSessionId) {
+      await this.cmd(['SET', this.sessionKey(patch.providerSessionId), id]);
+    }
+    return next;
+  }
+
+  async findBySessionId(sessionId: string) {
+    const id = await this.cmd<string | null>(['GET', this.sessionKey(sessionId)]);
+    return id ? this.get(id) : null;
+  }
+
+  async findByProviderRef(ref: string) {
+    return (await this.findBySessionId(ref)) ?? (await this.get(ref));
+  }
+
+  async list() {
+    const ids = await this.cmd<string[]>(['LRANGE', 'orders:index', 0, 99]);
+    const orders = await Promise.all(ids.map((id) => this.get(id)));
+    return orders.filter((o): o is Order => Boolean(o));
+  }
+}
+
+const buildStore = (): OrderStore => {
+  const kvUrl = process.env.KV_REST_API_URL?.trim();
+  const kvToken = process.env.KV_REST_API_TOKEN?.trim();
+  if (kvUrl && kvToken) {
+    console.log('[store] Vercel KV (Upstash Redis)');
+    return new KvOrderStore(kvUrl, kvToken);
+  }
+  console.log('[store] plikowy (dev/single-instance)');
+  return new FileOrderStore();
+};
+
+export const store: OrderStore = buildStore();

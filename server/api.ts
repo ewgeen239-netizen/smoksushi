@@ -69,7 +69,11 @@ export async function handleApiRequest(
   res: ServerResponse,
 ): Promise<boolean> {
   const url = new URL(req.url ?? '/', config.appUrl);
-  const path = url.pathname;
+  // Vercel routuje /mock-pay/* przez rewrite na /api/mock-pay/* — normalizujemy z powrotem,
+  // żeby routing był identyczny lokalnie (dev/standalone) i na serverless.
+  const path = url.pathname.startsWith('/api/mock-pay/')
+    ? url.pathname.slice(4)
+    : url.pathname;
   const method = (req.method ?? 'GET').toUpperCase();
 
   if (!path.startsWith('/api/') && !path.startsWith('/mock-pay/')) return false;
@@ -251,7 +255,7 @@ export async function handleApiRequest(
         json(res, 404, { error: 'not_found' });
         return true;
       }
-      return handleMockPay(req, res, url, method);
+      return handleMockPay(req, res, url, path, method);
     }
 
     json(res, 404, { error: 'not_found', message: 'Nieznany endpoint.' });
@@ -297,9 +301,10 @@ async function handleMockPay(
   req: IncomingMessage,
   res: ServerResponse,
   url: URL,
+  path: string,
   method: string,
 ): Promise<boolean> {
-  const complete = url.pathname.match(/^\/mock-pay\/([\w-]+)\/complete$/);
+  const complete = path.match(/^\/mock-pay\/([\w-]+)\/complete$/);
   if (complete && method === 'POST') {
     const sessionId = complete[1];
     const raw = await readRawBody(req);
@@ -333,7 +338,7 @@ async function handleMockPay(
     return true;
   }
 
-  const session = url.pathname.match(/^\/mock-pay\/([\w-]+)$/);
+  const session = path.match(/^\/mock-pay\/([\w-]+)$/);
   if (session && method === 'GET') {
     const sessionId = session[1];
     const order = await store.findBySessionId(sessionId);

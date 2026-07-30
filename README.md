@@ -239,6 +239,28 @@ Pola: Imię\*, Telefon\* (9 cyfr lub +48…), E-mail (opcjonalny, walidowany je�
 
 Punkty (1 pkt / 10 zł), licznik zamówień z progresem do 10., trzy poziomy, kod `SMOK10` na pierwsze zamówienie z kopiowaniem, zapis na promocje przez e-mail lub SMS, blok „Zamów ponownie" dokładający pozycje z ostatniego zamówienia do koszyka.
 
+## Deploy na Vercel
+
+Repo jest gotowe do importu (`vercel.json` + serverless `api/[...path].ts`).
+
+1. vercel.com → **Add New → Project** → zaimportuj `ewgeen239-netizen/smoksushi`.
+   Framework: **Vite** wykryje się sam (build `vite build`, output `dist`).
+2. **Storage → Create → KV** (Upstash Redis) i połącz z projektem. To ustawia
+   `KV_REST_API_URL` + `KV_REST_API_TOKEN`. **Wymagane, by płatności działały** — na
+   serverless webhook i utworzenie zamówienia to osobne wywołania i muszą dzielić stan.
+   Bez KV działa tylko UI (menu, koszyk); backend przełącza się na store plikowy, który na
+   serverless nie jest współdzielony między wywołaniami.
+3. **Environment Variables** (Settings → Environment Variables):
+   - `PAYMENT_PROVIDER=mock` na demo, albo `stripe` + klucze na produkcję.
+   - `MOCK_WEBHOOK_SECRET` — losowy ciąg (podpisy webhooka symulatora + tokeny zamówień).
+   - `APP_URL` — opcjonalnie; bez niego bierzemy `VERCEL_URL` deploymentu. Dla stałego
+     adresu webhooka od realnego operatora ustaw domenę produkcyjną.
+4. **Deploy**. `/api/*` i `/mock-pay/*` obsługuje funkcja serverless (bodyParser wyłączony —
+   webhooki dostają surowe body, więc podpisy się zgadzają), reszta to statyczne SPA.
+
+Serverless (Vercel) vs. jeden proces (Render/Railway, `npm start`): store plikowy działa
+tylko w trybie jednoprocesowym; na Vercelu użyj KV.
+
 ## Co podmienić przed publikacją
 
 1. **Zdjęcia** — `PHOTOS` w `src/data/menu.ts` wskazuje na Unsplash (poglądowo). Wstaw własne zdjęcia z Instagrama/sesji do `public/` i podmień ścieżki. `SafeImage` trzyma proporcje i pokazuje fallback, więc brak pliku nie łamie layoutu.

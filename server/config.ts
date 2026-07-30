@@ -19,7 +19,11 @@ const resolveProvider = (): ProviderName => {
 export const config = {
   requestedProvider: rawProvider as ProviderName,
   provider: resolveProvider(),
-  appUrl: env('APP_URL', 'http://localhost:5173').replace(/\/$/, ''),
+  // APP_URL ma priorytet; na Vercelu bez niego bierzemy domenę deploymentu (VERCEL_URL).
+  appUrl: (
+    env('APP_URL') ||
+    (env('VERCEL_URL') ? `https://${env('VERCEL_URL')}` : 'http://localhost:5173')
+  ).replace(/\/$/, ''),
   currency: 'PLN',
 
   stripe: {

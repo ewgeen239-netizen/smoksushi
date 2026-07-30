@@ -2,7 +2,7 @@
  * Testy backendu płatności bez frameworka — `npm test`.
  * Wymuszamy tryb mock, żeby nie było zależności od kluczy.
  */
-import './setup-env'; // MUSI być pierwszy — ustawia env zanim config się zainicjuje
+import './setup-env'; // MUSI być pierwszy — ustawia env i czyści .data/test przed importem store
 import assert from 'node:assert/strict';
 import { rmSync } from 'node:fs';
 import { createOrder, ValidationError } from '../orders';
@@ -11,8 +11,6 @@ import { buildMockEvent, signMockPayload } from '../providers/mock';
 import { verifyStripeSignature, StripeProvider } from '../providers/stripe';
 import { store } from '../store';
 import type { CreateOrderPayload } from '../../src/shared/payments';
-
-rmSync('.data/test', { recursive: true, force: true });
 
 let passed = 0;
 const tests: [string, () => Promise<void> | void][] = [];

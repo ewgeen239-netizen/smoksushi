@@ -14,13 +14,19 @@ export default function ProductCard({ product, tone = 'light' }: Props) {
   const { add, items } = useCart();
   const inCart = items.find((i) => i.id === product.id)?.quantity ?? 0;
 
+  const onMove = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    e.currentTarget.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
+
   const wrapper =
     tone === 'light'
-      ? 'card-light lift flex h-full flex-col overflow-hidden'
-      : 'card lift flex h-full flex-col overflow-hidden';
+      ? 'card-light spotlight lift flex h-full flex-col overflow-hidden'
+      : 'card spotlight lift flex h-full flex-col overflow-hidden';
 
   return (
-    <article className={wrapper}>
+    <article className={wrapper} onMouseMove={onMove}>
       <div className="relative overflow-hidden">
         <SafeImage src={product.image} alt={product.name} ratio="photo" className="zoom-img" />
         {product.badges && product.badges.length > 0 && (

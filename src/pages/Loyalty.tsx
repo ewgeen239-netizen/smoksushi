@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import CountUp from '../components/CountUp';
 import ReorderBlock from '../components/ReorderBlock';
 import SectionHead from '../components/SectionHead';
 import { useCart } from '../context/CartContext';
@@ -68,13 +69,16 @@ export default function Loyalty() {
               <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-cream/45">
                 Twoje punkty
               </p>
-              <p className="display mt-1 text-4xl leading-none text-gold">{club.points}</p>
+              <CountUp
+                value={club.points}
+                className="display mt-1 block text-4xl leading-none text-gold"
+              />
             </div>
             <div className="card p-4">
               <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-cream/45">
                 Zamówienia
               </p>
-              <p className="display mt-1 text-4xl leading-none">{club.orders}</p>
+              <CountUp value={club.orders} className="display mt-1 block text-4xl leading-none" />
             </div>
             <div className="card col-span-2 p-4 sm:col-span-1">
               <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-cream/45">

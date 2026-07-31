@@ -41,7 +41,10 @@ export default function SafeImage({ src, alt, className = '', ratio = 'photo', e
       )}
       {(failed || !loaded) && (
         <div className="absolute inset-0 grid place-items-center bg-gradient-to-b from-ink-700 to-ink-800">
-          <span className="display text-[11px] tracking-[0.25em] text-cream/30">SUSHI SMOK</span>
+          {!failed && <div className="skeleton" aria-hidden="true" />}
+          <span className="display relative text-[11px] tracking-[0.25em] text-cream/30">
+            SUSHI SMOK
+          </span>
         </div>
       )}
     </div>

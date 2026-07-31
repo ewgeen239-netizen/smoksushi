@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { RESTAURANT } from '../data/delivery';
@@ -15,10 +15,23 @@ const NAV = [
 export default function Header() {
   const { itemCount, subtotal, openCart } = useCart();
   const [mobileNav, setMobileNav] = useState(false);
+  const [bump, setBump] = useState(false);
+  const prevCount = useRef(itemCount);
   const location = useLocation();
   const scrolled = useScrolled(12);
 
   useEffect(() => setMobileNav(false), [location.pathname]);
+
+  // „bump" ikony koszyka, gdy przybywa pozycji
+  useEffect(() => {
+    if (itemCount > prevCount.current) {
+      setBump(true);
+      const t = window.setTimeout(() => setBump(false), 450);
+      prevCount.current = itemCount;
+      return () => window.clearTimeout(t);
+    }
+    prevCount.current = itemCount;
+  }, [itemCount]);
 
   return (
     <header
@@ -67,7 +80,9 @@ export default function Header() {
             className="btn-primary btn-sm relative"
             aria-label={`Twój koszyk, ${itemCount} pozycji`}
           >
-            <CartIcon />
+            <span className={bump ? 'cart-bump inline-flex' : 'inline-flex'}>
+              <CartIcon />
+            </span>
             <span className="hidden sm:inline">Koszyk</span>
             {itemCount > 0 && (
               <span className="ml-0.5 rounded-full bg-black/25 px-2 py-0.5 text-[12px] font-bold tabular-nums">

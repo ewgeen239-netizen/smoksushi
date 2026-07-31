@@ -3,6 +3,7 @@ import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import ScrollProgress from './components/ScrollProgress';
 import StickyCartBar from './components/StickyCartBar';
 import Toast from './components/Toast';
 import { CartProvider } from './context/CartContext';
@@ -36,23 +37,32 @@ function NotFound() {
   );
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    // key na ścieżce => miękkie wejście przy każdej zmianie trasy
+    <main key={location.pathname} className="route-fade flex-1">
+      <Routes location={location}>
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/dostawa" element={<Delivery />} />
+        <Route path="/smok-club" element={<Loyalty />} />
+        <Route path="/zamowienie" element={<Checkout />} />
+        <Route path="/zamowienie/status" element={<OrderStatus />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </main>
+  );
+}
+
 export default function App() {
   return (
     <CartProvider>
+      <ScrollProgress />
       <ScrollToTop />
       <div className="flex min-h-dvh flex-col">
         <Header />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/dostawa" element={<Delivery />} />
-            <Route path="/smok-club" element={<Loyalty />} />
-            <Route path="/zamowienie" element={<Checkout />} />
-            <Route path="/zamowienie/status" element={<OrderStatus />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+        <AnimatedRoutes />
         <Footer />
       </div>
       <StickyCartBar />

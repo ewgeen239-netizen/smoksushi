@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "project": {
+    "name": "sushi-smok",
+    "productType": null,
+    "stack": [
+      "react",
+      "tailwind-v3",
+      "vite"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "src/index.css"
+    ],
+    "components": [],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "dark",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "mobile-first, dark restaurant identity (ink-900 bg, fire-500 accent, cream text)",
+      "radius max 8px (cards/buttons)",
+      "all motion neutralized under prefers-reduced-motion",
+      "custom Tailwind design system in src/index.css — reuse .btn/.card/.chip tokens, no shadcn"
+    ],
+    "avoid": [
+      "decorative gradient orbs, abstract SVG blobs, glassmorphism",
+      "huge marketing headlines beyond hero, excessive cards",
+      "installing 21st shadcn components that fight the custom system"
+    ]
+  },
+  "decisions": [
+    {
+      "choice": "Keep bespoke design system; add tasteful motion/detailing (spotlight cards, count-ups, scroll progress, cart bump) grounded in project tokens instead of importing 21st hero templates.",
+      "date": "2026-07-31"
+    }
+  ],
+  "evidence": [
+    {
+      "fact": "design.colorMode:light",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v3",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:vite",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-07-31T15:43:40.196Z"
+}

@@ -10,7 +10,10 @@ export default function Marquee({ items, speed = 34, className = '' }: Props) {
   // podwajamy listę, żeby pętla -50% była płynna
   const doubled = [...items, ...items];
   return (
-    <div className={`marquee group relative overflow-hidden ${className}`} aria-hidden="true">
+    <div
+      className={`marquee marquee-fade group relative overflow-hidden ${className}`}
+      aria-hidden="true"
+    >
       <div
         className="marquee-track"
         style={{ ['--marquee-speed' as string]: `${speed}s` }}

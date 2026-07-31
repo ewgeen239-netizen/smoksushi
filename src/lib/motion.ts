@@ -126,6 +126,69 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>(strength = 0
   return ref;
 }
 
+/**
+ * Magnetyczny przycisk — element delikatnie „przyciąga się" do kursora.
+ * Wyłączony na dotyku i przy reduced-motion.
+ */
+export function useMagnetic<T extends HTMLElement = HTMLButtonElement>(strength = 0.35) {
+  const ref = useRef<T | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReduced() || window.matchMedia('(hover: none)').matches) return;
+
+    const onMove = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - (r.left + r.width / 2)) * strength;
+      const y = (e.clientY - (r.top + r.height / 2)) * strength;
+      el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    };
+    const reset = () => {
+      el.style.transform = '';
+    };
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', reset);
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      el.removeEventListener('mouseleave', reset);
+    };
+  }, [strength]);
+
+  return ref;
+}
+
+/**
+ * Lekki przechył 3D karty za kursorem + aktualizacja zmiennych --mx/--my dla reflektora.
+ * Jeden handler robi tilt i spotlight naraz.
+ */
+export function useTilt<T extends HTMLElement = HTMLElement>(max = 6) {
+  const ref = useRef<T | null>(null);
+  const enabled = useRef(true);
+
+  useEffect(() => {
+    enabled.current = !prefersReduced() && !window.matchMedia('(hover: none)').matches;
+  }, []);
+
+  const onMouseMove = (e: React.MouseEvent<T>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    el.style.setProperty('--mx', `${(px * 100).toFixed(1)}%`);
+    el.style.setProperty('--my', `${(py * 100).toFixed(1)}%`);
+    if (!enabled.current) return;
+    const rx = (0.5 - py) * max;
+    const ry = (px - 0.5) * max;
+    el.style.transform = `perspective(900px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+  };
+
+  const onMouseLeave = (e: React.MouseEvent<T>) => {
+    e.currentTarget.style.transform = '';
+  };
+
+  return { ref, onMouseMove, onMouseLeave };
+}
+
 /** Śledzi, czy strona jest przewinięta poniżej progu — do „shrink on scroll" w headerze. */
 export function useScrolled(threshold = 12) {
   const [scrolled, setScrolled] = useState(false);

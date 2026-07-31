@@ -427,6 +427,129 @@
   animation: cart-bump 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Przesuwający się połysk na przyciskach primary (hover) */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .btn-primary:hover::after {
+    animation: btn-shine 0.85s ease;
+  }
+}
+@keyframes btn-shine {
+  from {
+    left: -60%;
+  }
+  to {
+    left: 130%;
+  }
+}
+
+/* Przechył 3D — szybkie podążanie + płynny powrót, z cieniem i zoomem zdjęcia */
+.tilt {
+  transition:
+    transform 0.18s ease-out,
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+@media (hover: hover) {
+  .tilt:hover {
+    box-shadow: 0 26px 52px -26px rgba(0, 0, 0, 0.7);
+  }
+  .tilt:hover .zoom-img {
+    transform: scale(1.07);
+  }
+}
+
+/* Połysk na bejdżu „Bestseller" */
+@keyframes badge-shine {
+  0% {
+    background-position: -150% 0;
+  }
+  60%,
+  100% {
+    background-position: 250% 0;
+  }
+}
+.badge-shine {
+  position: relative;
+  overflow: hidden;
+}
+.badge-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: badge-shine 3.2s ease-in-out infinite;
+}
+
+/* Wejście pozycji w koszyku — kaskadą */
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.item-in {
+  animation: item-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Powolny dryf światła nad hero — żywość bez „orbów" */
+@keyframes hero-sheen {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.2;
+    transform: translateX(60%);
+  }
+}
+.hero-sheen {
+  position: absolute;
+  inset: -20% -30%;
+  pointer-events: none;
+  background: linear-gradient(
+    75deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%
+  );
+  animation: hero-sheen 11s ease-in-out infinite;
+}
+
 /* Miękkie wejście trasy */
 @keyframes route-in {
   from {

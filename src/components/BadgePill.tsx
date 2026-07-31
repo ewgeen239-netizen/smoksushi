@@ -8,9 +8,11 @@ const STYLES: Record<string, string> = {
 
 export default function BadgePill({ label }: { label: string }) {
   const style = STYLES[label] ?? 'bg-ink-900/5 text-ink-700 border-black/10';
+  // połysk tylko na „Bestseller" — subtelny sygnał, nie dyskoteka
+  const shine = label === 'Bestseller' ? 'badge-shine' : '';
   return (
     <span
-      className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${style}`}
+      className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${style} ${shine}`}
     >
       {label}
     </span>

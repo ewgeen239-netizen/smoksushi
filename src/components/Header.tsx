@@ -56,7 +56,7 @@ export default function Header() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `rounded-lg px-3.5 py-2 text-[15px] font-semibold transition ${
+                `link-underline rounded-lg px-3.5 py-2 text-[15px] font-semibold transition ${
                   isActive ? 'bg-white/10 text-cream' : 'text-cream/65 hover:text-cream'
                 }`
               }

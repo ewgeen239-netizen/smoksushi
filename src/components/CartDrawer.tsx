@@ -73,8 +73,12 @@ export default function CartDrawer() {
             {/* pozycje */}
             <div className="flex-1 overflow-y-auto px-4 py-3">
               <ul className="space-y-3">
-                {items.map((item) => (
-                  <li key={item.id} className="card flex gap-3 p-2.5">
+                {items.map((item, i) => (
+                  <li
+                    key={item.id}
+                    className="item-in card flex gap-3 p-2.5"
+                    style={{ animationDelay: `${Math.min(i * 45, 300)}ms` }}
+                  >
                     <SafeImage
                       src={item.image}
                       alt={item.name}

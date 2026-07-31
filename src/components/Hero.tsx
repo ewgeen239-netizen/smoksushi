@@ -6,7 +6,7 @@ import { FREE_DELIVERY_FROM, RESTAURANT } from '../data/delivery';
 import { pln } from '../lib/format';
 import { openStatus } from '../lib/hours';
 import { cheapestMinOrder } from '../lib/pricing';
-import { useParallax } from '../lib/motion';
+import { useMagnetic, useParallax } from '../lib/motion';
 
 const STATS = [
   { k: 'Dostawa', v: '40–60 min' },
@@ -18,6 +18,7 @@ const STATS = [
 export default function Hero() {
   const status = openStatus();
   const parallax = useParallax<HTMLDivElement>(0.12);
+  const magnet = useMagnetic<HTMLAnchorElement>(0.22);
 
   return (
     <section className="grain relative isolate overflow-hidden border-b border-white/10">
@@ -33,6 +34,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-ink-900/74" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/35 to-ink-900/70" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink-900/80 via-transparent to-transparent" />
+        <div className="hero-sheen" />
       </div>
 
       <div className="shell py-12 sm:py-16 lg:py-24">
@@ -68,7 +70,11 @@ export default function Hero() {
           </p>
 
           <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
-            <Link to="/menu" className="btn-primary group w-full sm:w-auto sm:px-9">
+            <Link
+              ref={magnet}
+              to="/menu"
+              className="btn-primary group w-full will-change-transform sm:w-auto sm:px-9"
+            >
               Zamów teraz
               <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </Link>

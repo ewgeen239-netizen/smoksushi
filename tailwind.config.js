@@ -22,7 +22,15 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        inter: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         display: ['"Bebas Neue"', 'Inter', 'system-ui', 'sans-serif'],
+        podium: [
+          '"FSP DEMO - PODIUM Sharp 4.11"',
+          '"Bebas Neue"',
+          'Inter',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       borderRadius: {
         none: '0px',

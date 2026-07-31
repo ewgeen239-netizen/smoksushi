@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import CartAside from '../components/CartAside';
+import MenuHero from '../components/MenuHero';
 import ProductCard from '../components/ProductCard';
 import { CATEGORIES, PRODUCTS } from '../data/menu';
-import { FREE_DELIVERY_FROM, RESTAURANT } from '../data/delivery';
-import { pln, plural } from '../lib/format';
+import { plural } from '../lib/format';
 import type { CategoryId } from '../types';
 
 const ALL = 'wszystkie';
@@ -12,6 +12,11 @@ const ALL = 'wszystkie';
 export default function Menu() {
   const [params, setParams] = useSearchParams();
   const [query, setQuery] = useState('');
+  const filtersRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToMenu = () => {
+    filtersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const activeCategory = (params.get('kategoria') ?? ALL) as CategoryId | typeof ALL;
 
@@ -47,20 +52,14 @@ export default function Menu() {
 
   return (
     <div className="pb-24 lg:pb-10">
-      {/* nagłówek strony */}
-      <section className="border-b border-white/10 bg-ink-800">
-        <div className="shell py-7">
-          <h1 className="display text-4xl leading-none sm:text-5xl">Menu</h1>
-          <p className="mt-2 max-w-[620px] text-[15px] leading-relaxed text-cream/60">
-            Wszystko kręcimy po złożeniu zamówienia. Dostawa w Szczecinie od {pln(8)}, darmowa od{' '}
-            {pln(FREE_DELIVERY_FROM)}. Odbiór osobisty: {RESTAURANT.street} —{' '}
-            {RESTAURANT.pickupDiscount}% taniej.
-          </p>
-        </div>
-      </section>
+      {/* kinowy nagłówek z wideo */}
+      <MenuHero onExplore={scrollToMenu} />
 
       {/* sticky filtry */}
-      <div className="sticky top-16 z-30 border-b border-white/10 bg-ink-900/95 backdrop-blur">
+      <div
+        ref={filtersRef}
+        className="sticky top-16 z-30 scroll-mt-16 border-b border-white/10 bg-ink-900/95 backdrop-blur"
+      >
         <div className="shell py-3">
           <div className="relative mb-2.5">
             <input

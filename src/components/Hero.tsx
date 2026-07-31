@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import KineticText from './KineticText';
-import SafeImage from './SafeImage';
 import { PHOTOS } from '../data/menu';
 import { FREE_DELIVERY_FROM, RESTAURANT } from '../data/delivery';
 import { pln } from '../lib/format';
 import { openStatus } from '../lib/hours';
 import { cheapestMinOrder } from '../lib/pricing';
 import { useMagnetic, useParallax } from '../lib/motion';
+
+// Suszi w tle (Mixkit, licencja darmowa) — hotlink stabilny, 720p pętla.
+// Podmiana: wgraj własne wideo do /public i wskaż ścieżkę tutaj.
+const VIDEO_SRC = 'https://assets.mixkit.co/videos/46020/46020-720.mp4';
 
 const STATS = [
   { k: 'Dostawa', v: '40–60 min' },
@@ -22,14 +25,21 @@ export default function Hero() {
 
   return (
     <section className="grain relative isolate overflow-hidden border-b border-white/10">
-      {/* tło z parallaxem + delikatnym unoszeniem */}
+      {/* tło z parallaxem + wideo suszi */}
       <div ref={parallax} className="absolute inset-0 -z-10 will-change-transform">
-        <SafeImage
-          src={PHOTOS.hero}
-          alt=""
-          ratio="hero"
-          className="float-slow h-full w-full"
-          eager
+        <video
+          className="float-slow h-full w-full object-cover"
+          src={VIDEO_SRC}
+          poster={PHOTOS.hero}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          onCanPlay={(e) => {
+            void e.currentTarget.play().catch(() => {});
+          }}
         />
         <div className="absolute inset-0 bg-ink-900/74" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/35 to-ink-900/70" />

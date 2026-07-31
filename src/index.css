@@ -2,70 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .font-podium {
-    font-family: 'FSP DEMO - PODIUM Sharp 4.11', 'Bebas Neue', Inter, system-ui, sans-serif;
-  }
-
-  @keyframes fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes scale-in {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .animate-fade-up {
-    opacity: 0;
-    animation: fade-up 0.8s ease-out forwards;
-  }
-  .animate-fade-up-delay-1 {
-    opacity: 0;
-    animation: fade-up 0.8s ease-out 0.2s forwards;
-  }
-  .animate-fade-up-delay-2 {
-    opacity: 0;
-    animation: fade-up 0.8s ease-out 0.4s forwards;
-  }
-  .animate-fade-up-delay-3 {
-    opacity: 0;
-    animation: fade-up 0.8s ease-out 0.6s forwards;
-  }
-  .animate-fade-up-delay-4 {
-    opacity: 0;
-    animation: fade-up 0.8s ease-out 0.8s forwards;
-  }
-  .animate-fade-in {
-    opacity: 0;
-    animation: fade-in 0.8s ease-out forwards;
-  }
-  .animate-fade-in-delay {
-    opacity: 0;
-    animation: fade-in 0.8s ease-out 0.3s forwards;
-  }
-}
-
 @layer base {
   :root {
     color-scheme: dark;
@@ -266,6 +202,27 @@
   .reveal.is-visible {
     opacity: 1;
     transform: none;
+  }
+
+  /* Vision reveal — treść „wyostrza się": odsłona clip-path + skala + wyjście z rozmycia */
+  .vision {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: scale(1.06);
+    filter: blur(12px);
+    transition:
+      clip-path 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.8s ease-out,
+      opacity 0.6s ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: clip-path, transform, filter, opacity;
+  }
+  .vision.is-visible {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    filter: blur(0);
   }
 
   /* Kinetyczny nagłówek: słowa wjeżdżają spod maski */
@@ -642,6 +599,12 @@
   .reveal {
     opacity: 1 !important;
     transform: none !important;
+  }
+  .vision {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+    filter: none !important;
   }
   .kinetic-line > span {
     transform: none !important;

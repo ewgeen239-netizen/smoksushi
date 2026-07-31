@@ -4,6 +4,7 @@ import Marquee from '../components/Marquee';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 import ReorderBlock from '../components/ReorderBlock';
+import Vision from '../components/Vision';
 import SafeImage from '../components/SafeImage';
 import SectionHead from '../components/SectionHead';
 import { CATEGORIES, PHOTOS, popularProducts } from '../data/menu';
@@ -174,7 +175,7 @@ export default function Home() {
 
       {/* ───────── DOSTAWA SKRÓT */}
       <section className="shell pb-10">
-        <div className="card overflow-hidden">
+        <Vision className="card overflow-hidden">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
             <div className="p-5 sm:p-7">
               <p className="mb-1.5 text-[12px] font-bold uppercase tracking-[0.16em] text-fire-400">
@@ -209,12 +210,12 @@ export default function Home() {
               className="h-full min-h-[220px]"
             />
           </div>
-        </div>
+        </Vision>
       </section>
 
       {/* ───────── SMOK CLUB TEASER */}
       <section className="shell pb-4">
-        <div className="card border-gold/30 bg-gold/[0.06] p-5 sm:p-7">
+        <Vision className="card border-gold/30 bg-gold/[0.06] p-5 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-5">
             <div className="max-w-[560px]">
               <p className="mb-1.5 text-[12px] font-bold uppercase tracking-[0.16em] text-gold">
@@ -232,7 +233,7 @@ export default function Home() {
               Dołącz do Smok Club
             </Link>
           </div>
-        </div>
+        </Vision>
       </section>
     </>
   );

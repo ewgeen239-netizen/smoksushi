@@ -3,6 +3,7 @@ import { DELIVERY_ZONES, FAQ, FREE_DELIVERY_FROM, RESTAURANT } from '../data/del
 import { pln } from '../lib/format';
 import { openStatus } from '../lib/hours';
 import SectionHead from '../components/SectionHead';
+import Vision from '../components/Vision';
 
 const MAP_SRC = `https://maps.google.com/maps?q=${encodeURIComponent(
   'Pomarańczowa 7, Szczecin',
@@ -114,7 +115,7 @@ export default function Delivery() {
 
       {/* mapa + odbiór osobisty */}
       <section className="shell pb-9">
-        <div className="card overflow-hidden">
+        <Vision className="card overflow-hidden">
           <div className="grid lg:grid-cols-2">
             <div className="p-5 sm:p-7">
               <p className="mb-1.5 text-[12px] font-bold uppercase tracking-[0.16em] text-fire-400">
@@ -174,7 +175,7 @@ export default function Delivery() {
               />
             </div>
           </div>
-        </div>
+        </Vision>
       </section>
 
       {/* FAQ */}

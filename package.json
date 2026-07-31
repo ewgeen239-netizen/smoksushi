@@ -12,7 +12,6 @@
     "test": "tsx server/__tests__/run.ts"
   },
   "dependencies": {
-    "lucide-react": "^1.28.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2"

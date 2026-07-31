@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { RESTAURANT } from '../data/delivery';
 import { pln } from '../lib/format';
+import { useScrolled } from '../lib/motion';
 import Logo from './Logo';
 
 const NAV = [
@@ -15,12 +16,23 @@ export default function Header() {
   const { itemCount, subtotal, openCart } = useCart();
   const [mobileNav, setMobileNav] = useState(false);
   const location = useLocation();
+  const scrolled = useScrolled(12);
 
   useEffect(() => setMobileNav(false), [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/95 backdrop-blur">
-      <div className="shell flex h-16 items-center gap-4">
+    <header
+      className={`sticky top-0 z-40 border-b transition-all duration-300 ${
+        scrolled
+          ? 'border-white/10 bg-ink-900/85 shadow-[0_8px_30px_-12px_rgba(0,0,0,.6)] backdrop-blur-xl'
+          : 'border-transparent bg-ink-900/95 backdrop-blur'
+      }`}
+    >
+      <div
+        className={`shell flex items-center gap-4 transition-all duration-300 ${
+          scrolled ? 'h-14' : 'h-16'
+        }`}
+      >
         <Link to="/" aria-label="Sushi Smok — strona główna" className="shrink-0">
           <Logo />
         </Link>

@@ -16,13 +16,13 @@ export default function ProductCard({ product, tone = 'light' }: Props) {
 
   const wrapper =
     tone === 'light'
-      ? 'card-light flex h-full flex-col overflow-hidden'
-      : 'card flex h-full flex-col overflow-hidden';
+      ? 'card-light lift flex h-full flex-col overflow-hidden'
+      : 'card lift flex h-full flex-col overflow-hidden';
 
   return (
     <article className={wrapper}>
-      <div className="relative">
-        <SafeImage src={product.image} alt={product.name} ratio="photo" />
+      <div className="relative overflow-hidden">
+        <SafeImage src={product.image} alt={product.name} ratio="photo" className="zoom-img" />
         {product.badges && product.badges.length > 0 && (
           <div className="absolute left-2 top-2 flex max-w-[calc(100%-1rem)] flex-wrap gap-1">
             {product.badges.slice(0, 2).map((b) => (

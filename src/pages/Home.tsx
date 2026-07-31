@@ -1,14 +1,24 @@
 import { Link } from 'react-router-dom';
+import Hero from '../components/Hero';
+import Marquee from '../components/Marquee';
 import ProductCard from '../components/ProductCard';
+import Reveal from '../components/Reveal';
 import ReorderBlock from '../components/ReorderBlock';
 import SafeImage from '../components/SafeImage';
 import SectionHead from '../components/SectionHead';
 import { CATEGORIES, PHOTOS, popularProducts } from '../data/menu';
 import { PROMOS } from '../data/promos';
-import { DELIVERY_ZONES, FREE_DELIVERY_FROM, RESTAURANT } from '../data/delivery';
+import { DELIVERY_ZONES, RESTAURANT } from '../data/delivery';
 import { pln } from '../lib/format';
-import { openStatus } from '../lib/hours';
-import { cheapestMinOrder } from '../lib/pricing';
+
+const MARQUEE = [
+  'Świeże sushi codziennie',
+  'Dostawa 40–60 min',
+  'Darmowa dostawa od 120 zł',
+  'Odbiór osobisty −10%',
+  'Płatność online · BLIK · karta',
+  'Smok Club — punkty za każde zamówienie',
+];
 
 const BENEFITS = [
   {
@@ -30,77 +40,16 @@ const BENEFITS = [
 ];
 
 export default function Home() {
-  const status = openStatus();
   const popular = popularProducts();
 
   return (
     <>
-      {/* ───────── HERO: od razu sprzedaje zamówienie */}
-      <section className="relative isolate overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 -z-10">
-          <SafeImage src={PHOTOS.hero} alt="" ratio="hero" className="h-full w-full" eager />
-          <div className="absolute inset-0 bg-ink-900/72" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/30 to-ink-900/70" />
-        </div>
+      <Hero />
 
-        <div className="shell py-10 sm:py-16 lg:py-20">
-          <div className="max-w-[640px]">
-            <span
-              className={`chip mb-4 ${
-                status.isOpen
-                  ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300'
-                  : 'border-cream/25 bg-white/5 text-cream/70'
-              }`}
-            >
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  status.isOpen ? 'bg-emerald-400' : 'bg-cream/50'
-                }`}
-              />
-              {status.label}
-            </span>
-
-            <h1 className="display text-[42px] leading-[0.92] sm:text-6xl lg:text-7xl">
-              Świeże sushi
-              <br />
-              z dostawą
-              <br />
-              <span className="text-fire-400">w Szczecinie</span>
-            </h1>
-
-            <p className="mt-4 max-w-[520px] text-[16px] leading-relaxed text-cream/75 sm:text-lg">
-              Zamów online w 2 minuty. Zamówienia od {pln(cheapestMinOrder)}, dostawa {pln(8)} —
-              darmowa od {pln(FREE_DELIVERY_FROM)}. Albo odbierz osobiście na {RESTAURANT.street} i
-              zapłać {RESTAURANT.pickupDiscount}% mniej.
-            </p>
-
-            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-              <Link to="/menu" className="btn-primary w-full sm:w-auto sm:px-8">
-                Zamów teraz
-              </Link>
-              <Link to="/dostawa" className="btn-ghost w-full sm:w-auto sm:px-8">
-                Sprawdź dostawę
-              </Link>
-            </div>
-
-            <dl className="mt-8 grid max-w-[560px] grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4">
-              {[
-                { k: 'Dostawa', v: '40–60 min' },
-                { k: 'Odbiór', v: '20–30 min' },
-                { k: 'Dostawa od', v: pln(8) },
-                { k: 'Darmowa od', v: pln(FREE_DELIVERY_FROM) },
-              ].map((f) => (
-                <div key={f.k}>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.14em] text-cream/45">
-                    {f.k}
-                  </dt>
-                  <dd className="display mt-0.5 text-xl leading-none">{f.v}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
+      {/* pasek marki */}
+      <div className="border-b border-white/10 bg-ink-800 py-3.5">
+        <Marquee items={MARQUEE} />
+      </div>
 
       <ReorderBlock />
 
@@ -115,10 +64,12 @@ export default function Home() {
         />
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {PROMOS.map((promo) => (
-            <article
+          {PROMOS.map((promo, i) => (
+            <Reveal
+              as="article"
               key={promo.id}
-              className={`card flex flex-col justify-between p-4 ${
+              delay={i * 90}
+              className={`card lift flex flex-col justify-between p-4 ${
                 promo.accent === 'fire'
                   ? 'border-fire-500/40 bg-fire-500/[0.08]'
                   : promo.accent === 'gold'
@@ -148,7 +99,7 @@ export default function Home() {
                   Wybierz z menu →
                 </Link>
               )}
-            </article>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -176,8 +127,10 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {popular.map((p) => (
-              <ProductCard key={p.id} product={p} tone="light" />
+            {popular.map((p, i) => (
+              <Reveal key={p.id} delay={i * 90} className="h-full">
+                <ProductCard product={p} tone="light" />
+              </Reveal>
             ))}
           </div>
         </div>
@@ -191,15 +144,16 @@ export default function Home() {
           text="Zestawy, rolki, nigiri, sushi burgery, przystawki i napoje — wszystko w jednym miejscu."
         />
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-          {CATEGORIES.map((c) => (
-            <Link
-              key={c.id}
-              to={`/menu?kategoria=${c.id}`}
-              className="card p-3.5 transition hover:border-fire-500/60 hover:bg-fire-500/[0.06]"
-            >
-              <p className="display text-lg leading-tight">{c.label}</p>
-              <p className="mt-1 text-[12px] leading-snug text-cream/50">{c.blurb}</p>
-            </Link>
+          {CATEGORIES.map((c, i) => (
+            <Reveal key={c.id} delay={i * 60}>
+              <Link
+                to={`/menu?kategoria=${c.id}`}
+                className="lift card block h-full p-3.5 hover:border-fire-500/60 hover:bg-fire-500/[0.06]"
+              >
+                <p className="display text-lg leading-tight">{c.label}</p>
+                <p className="mt-1 text-[12px] leading-snug text-cream/50">{c.blurb}</p>
+              </Link>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -209,11 +163,11 @@ export default function Home() {
         <SectionHead eyebrow="Dlaczego Sushi Smok" title="Cztery rzeczy, na których nie oszczędzamy" />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map((b, i) => (
-            <article key={b.title} className="card p-4">
+            <Reveal as="article" key={b.title} delay={i * 90} className="card lift p-4">
               <span className="display text-3xl leading-none text-fire-500">0{i + 1}</span>
               <h3 className="mt-2.5 text-[16px] font-bold">{b.title}</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-cream/60">{b.text}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
       </section>

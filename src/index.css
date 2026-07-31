@@ -174,12 +174,173 @@
   }
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Premium motion layer
+   ───────────────────────────────────────────────────────────── */
+
+/* Scroll-reveal: element wchodzi z dołu z lekkim skalowaniem, ze staggerem */
+@layer components {
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Kinetyczny nagłówek: słowa wjeżdżają spod maski */
+  .kinetic-line {
+    display: block;
+    overflow: hidden;
+    /* headroom na polskie diakrytyki (Ś, Ż) i podcięcia — inaczej maska je obcina */
+    padding: 0.16em 0.04em 0.12em;
+    margin: -0.14em 0 -0.1em;
+  }
+  .kinetic-line > span {
+    display: inline-block;
+    transform: translateY(115%);
+    transition: transform 0.85s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-delay: var(--kin-delay, 0ms);
+  }
+  .kinetic-ready .kinetic-line > span {
+    transform: none;
+  }
+
+  /* Podkreślenie rysowane od lewej na hover */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover {
+    background-size: 100% 2px;
+  }
+
+  /* Premium hover dla kart menu */
+  .lift {
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s ease;
+    will-change: transform;
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.65);
+    }
+    .lift:hover .zoom-img {
+      transform: scale(1.07);
+    }
+  }
+  .zoom-img {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  /* Delikatne ziarno filmowe — premium, nie „gradient orb” */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Marquee — nieskończony pasek */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee var(--marquee-speed, 34s) linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Subtelne unoszenie zdjęcia hero */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: scale(1.06) translateY(0);
+  }
+  50% {
+    transform: scale(1.06) translateY(-14px);
+  }
+}
+.float-slow {
+  animation: float-slow 13s ease-in-out infinite;
+}
+
+/* Shimmer na akcentowym tekście */
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+.shimmer {
+  background: linear-gradient(90deg, #ff4c39 0%, #e9b44c 40%, #ff4c39 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+/* Puls „live” kropki */
+@keyframes ping-soft {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+.pulse-live {
+  animation: ping-soft 2.4s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  /* nie chowaj treści, gdy animacje wyłączone */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .kinetic-line > span {
+    transform: none !important;
+  }
+  .float-slow {
+    animation: none !important;
+    transform: scale(1.06) !important;
   }
 }
